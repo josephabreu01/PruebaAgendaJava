@@ -5,6 +5,7 @@
 package Cliente;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -14,10 +15,10 @@ public class Cliente {
     private String Id;
     private String Nombre;
     private String Apellido;
-    private ArrayList Direcciones = new ArrayList() ;
+    private HashMap<String, String> Direcciones = new HashMap<String, String>() ;
     
     
-    public Cliente (String Id, String Nombre, String Apellido, ArrayList<String> Direcciones){
+    public Cliente (String Id, String Nombre, String Apellido, HashMap<String, String> Direcciones){
         this.Id = Id;
         this.Nombre = Nombre;
         this.Apellido =Apellido;
@@ -48,13 +49,15 @@ public class Cliente {
         this.Apellido = Apellido;
     }
 
-    public ArrayList getDirecciones() {
+    public HashMap<String, String> getDirecciones() {
         return Direcciones;
     }
 
-    public void setDirecciones(ArrayList Direcciones) {
+    public void setDirecciones(HashMap<String, String> Direcciones) {
         this.Direcciones = Direcciones;
     }
+
+   
 
     
     

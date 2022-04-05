@@ -2,10 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package FormularioCliente;
+package Vistas;
 
 import Cliente.Cliente;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -15,16 +17,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FormularioCliente extends javax.swing.JFrame {
 
-    ArrayList Agenda = new ArrayList();
-    ArrayList DireccionesAdd = new ArrayList();
+    public static LinkedList contenedor = new LinkedList();
+    public int buscarId;
+
+    HashMap<String, String> DireccionesAdd = new HashMap<String, String>();
 
     /**
      * Creates new form FormularioCliente
      */
     public FormularioCliente() {
         initComponents();
-        ModeloTB();
-        CargarAgenda();
     }
 
     public void Limpiar() {
@@ -42,26 +44,8 @@ public class FormularioCliente extends javax.swing.JFrame {
         txtDirecciones.setText(Direcciones);
     }
 
-    public void CargarAgenda() {
-        Object Ob[] = null;
-
-        Limpiar();
-        for (int i = 0; i < Agenda.size(); i++) {
-            Cliente Cli = (Cliente) Agenda.get(i);
-            TB.addRow(Ob);
-            TB.setValueAt(Cli.getId(), i, 0);
-            TB.setValueAt(Cli.getNombre(), i, 1);
-            TB.setValueAt(Cli.getApellido(), i, 2);
-            TB.setValueAt(Cli.getDirecciones(), i, 3);
-        }
-    }
-
-    public void BorrarLimpiarTabla() {
-        int filas = tablaClientes.getRowCount();
-
-        for (int i = filas - 1; i >= 0; i--) {
-            TB.removeRow(i);
-        }
+    public void Notificacion(String texto) {
+        JOptionPane.showMessageDialog(null, texto);
     }
 
     /**
@@ -82,10 +66,8 @@ public class FormularioCliente extends javax.swing.JFrame {
         txtApellido = new javax.swing.JTextField();
         txtDirecciones = new javax.swing.JTextField();
         btnGuadarCliente = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tablaClientes = new javax.swing.JTable();
         btnElimininar = new javax.swing.JButton();
-        btnBorrarTodo = new javax.swing.JButton();
+        mostrarClientes = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         btnAgregarDirecciones = new javax.swing.JButton();
 
@@ -99,37 +81,24 @@ public class FormularioCliente extends javax.swing.JFrame {
 
         jLabel4.setText("Id");
 
+        txtId.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtIdKeyTyped(evt);
+            }
+        });
+
         txtNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNombreActionPerformed(evt);
             }
         });
 
-        btnGuadarCliente.setText("Agregar Cliente");
-        btnGuadarCliente.setActionCommand("Agregar Cliente");
+        btnGuadarCliente.setText("Agregar Nuevo Cliente");
         btnGuadarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGuadarClienteActionPerformed(evt);
             }
         });
-
-        tablaClientes.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        tablaClientes.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaClientesMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(tablaClientes);
 
         btnElimininar.setText("Eliminar");
         btnElimininar.addActionListener(new java.awt.event.ActionListener() {
@@ -138,14 +107,14 @@ public class FormularioCliente extends javax.swing.JFrame {
             }
         });
 
-        btnBorrarTodo.setText("Limpiar Agenda");
-        btnBorrarTodo.addActionListener(new java.awt.event.ActionListener() {
+        mostrarClientes.setText("Mostrar Clientes");
+        mostrarClientes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBorrarTodoActionPerformed(evt);
+                mostrarClientesActionPerformed(evt);
             }
         });
 
-        btnEditar.setText("Editar Selecion");
+        btnEditar.setText("Modificar Cliente ");
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditarActionPerformed(evt);
@@ -164,70 +133,66 @@ public class FormularioCliente extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAgregarDirecciones)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txtDirecciones, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(27, 27, 27)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
+                        .addGap(41, 41, 41)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(mostrarClientes, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnGuadarCliente, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtDirecciones, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnAgregarDirecciones))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(btnGuadarCliente)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnElimininar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 530, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnBorrarTodo)
-                .addGap(146, 146, 146))
+                            .addComponent(btnEditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnElimininar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(47, Short.MAX_VALUE)
-                .addComponent(btnBorrarTodo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12))
             .addGroup(layout.createSequentialGroup()
-                .addGap(56, 56, 56)
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtDirecciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAgregarDirecciones))
-                .addGap(56, 56, 56)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(txtDirecciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAgregarDirecciones)
+                .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuadarCliente)
-                    .addComponent(btnElimininar)
                     .addComponent(btnEditar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(mostrarClientes)
+                    .addComponent(btnElimininar))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
 
         pack();
@@ -239,15 +204,17 @@ public class FormularioCliente extends javax.swing.JFrame {
 
     private void btnGuadarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuadarClienteActionPerformed
         String Nombre, Apellido, Id;
-        ArrayList<String> Direccion = new <String>ArrayList();
+        HashMap<String, String> Direcciones = new HashMap<String, String>();
 
         Nombre = txtNombre.getText();
         Apellido = txtApellido.getText();
         Id = txtId.getText();
-        Direccion.add(txtDirecciones.getText());
+        Direcciones.put("Direccion", txtDirecciones.getText());
+        Direcciones.toString();
 
         if (this.DireccionesAdd.size() > 0) {
-            Direccion.addAll(this.DireccionesAdd);
+            Direcciones.put("Dirercciones", this.DireccionesAdd.toString());
+            this.DireccionesAdd.clear();
         }
 
         if (txtNombre.getText().equals("")) {
@@ -268,76 +235,72 @@ public class FormularioCliente extends javax.swing.JFrame {
             return;
         }
 
-        Cliente cliente = new Cliente(Id, Nombre, Apellido, Direccion);
+        Cliente cliente = new Cliente(Id, Nombre, Apellido, Direcciones);
 
-        Agenda.add(cliente);
+        contenedor.add(cliente);
         Limpiar();
-        CargarAgenda();
+
     }//GEN-LAST:event_btnGuadarClienteActionPerformed
 
     private void btnElimininarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElimininarActionPerformed
-        int fila = tablaClientes.getSelectedRow();
-        if (fila > 0) {
-            TB.removeRow(fila);
-            JOptionPane.showMessageDialog(null, "Se Elimini el Cliente");
-        } else {
-            JOptionPane.showMessageDialog(null, "Selecione el cliente que desea borrar");
-        }
+        contenedor.remove(buscarId);
+        Limpiar();
+
+        Notificacion("Se elimino el texto");
+
     }//GEN-LAST:event_btnElimininarActionPerformed
 
-    private void btnBorrarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarTodoActionPerformed
-        int filas = tablaClientes.getRowCount();
-
-        for (int i = filas - 1; i >= 0; i--) {
-            TB.removeRow(i);
-        }
-    }//GEN-LAST:event_btnBorrarTodoActionPerformed
+    private void mostrarClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostrarClientesActionPerformed
+        tablaClientes mostrarClientes = new tablaClientes();
+        mostrarClientes.setVisible(true);
+    }//GEN-LAST:event_mostrarClientesActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
 
-        if (tablaClientes.getSelectedRowCount() != 1) {
-            return;
-        }
-
         String Nombre, Apellido, Id;
-        ArrayList<String> Direccion = new <String>ArrayList();
+        HashMap<String, String> Direcciones = new HashMap<String, String>();
 
         Nombre = txtNombre.getText();
         Apellido = txtApellido.getText();
         Id = txtId.getText();
-        Direccion.add(txtDirecciones.getText());
 
-        Cliente cliente = new Cliente(Id, Nombre, Apellido, Direccion);
-        int fila = tablaClientes.getSelectedRow();
+        Direcciones.put("Direcciones", txtDirecciones.getText());
+        Direcciones.toString();
 
-        tablaClientes.setValueAt(cliente.getId(), fila, 0);
-        tablaClientes.setValueAt(cliente.getNombre(), fila, 1);
-        tablaClientes.setValueAt(cliente.getApellido(), fila, 2);
-        tablaClientes.setValueAt(cliente.getDirecciones(), fila, 3);
-        CargarAgenda();
+        Cliente cliente = new Cliente(Id, Nombre, Apellido, Direcciones);
+
+        contenedor.set(buscarId, cliente);
+        Limpiar();
+        Notificacion("Se edito el cliente");
+
     }//GEN-LAST:event_btnEditarActionPerformed
 
-    private void tablaClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaClientesMouseClicked
-
-        int fila = tablaClientes.getSelectedRow();
-
-        String Nombre, Apellido, Id;
-        ArrayList Direccion = new ArrayList();
-
-        Nombre = (String) TB.getValueAt(fila, 0);
-        Apellido = (String) TB.getValueAt(fila, 1);
-        Id = (String) TB.getValueAt(fila, 2);
-        Direccion = (ArrayList) TB.getValueAt(fila, 3);
-
-        Llenar(Nombre, Apellido, Id, Direccion.toString());
-
-    }//GEN-LAST:event_tablaClientesMouseClicked
-
     private void btnAgregarDireccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarDireccionesActionPerformed
-        this.DireccionesAdd.add(txtDirecciones.getText());
+        this.DireccionesAdd.put("Direccion", txtDirecciones.getText());
         txtDirecciones.setText("");
-        JOptionPane.showMessageDialog(null, "Se Agrrego una Direccion al Cliente");
+        Notificacion("Se Agrrego una Direccion al Cliente");
     }//GEN-LAST:event_btnAgregarDireccionesActionPerformed
+
+    private void txtIdKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdKeyTyped
+        // TODO add your handling code here:
+        int keyPress = evt.getKeyChar();
+
+        if (keyPress == 10) {
+            String idEncontrado = txtId.getText().trim();
+            Cliente C;
+            for (int i = 0; i < contenedor.size(); i++) {
+                C = (Cliente) contenedor.get(i);
+                if (idEncontrado.equalsIgnoreCase(C.getId())) {
+                    Llenar(C.getNombre(), C.getApellido(), C.getId(), C.getDirecciones().toString());
+                    buscarId = i;
+                    String busueda = "Cliente encontrado " + C.getNombre() + C.getApellido();
+                    Notificacion(busueda);
+                    break;
+                }
+            }
+        }
+
+    }//GEN-LAST:event_txtIdKeyTyped
 
     /**
      * @param args the command line arguments
@@ -374,22 +337,9 @@ public class FormularioCliente extends javax.swing.JFrame {
         });
     }
 
-    DefaultTableModel TB;
-
-    private void ModeloTB() {
-        try {
-            TB = (new DefaultTableModel(null, new String[]{"Id", "Nombre", "Apellido", "Direcciones"}) {
-            });
-
-            tablaClientes.setModel(TB);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Eror");
-        }
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarDirecciones;
-    private javax.swing.JButton btnBorrarTodo;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnElimininar;
     private javax.swing.JButton btnGuadarCliente;
@@ -397,8 +347,7 @@ public class FormularioCliente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tablaClientes;
+    private javax.swing.JButton mostrarClientes;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtDirecciones;
     private javax.swing.JTextField txtId;

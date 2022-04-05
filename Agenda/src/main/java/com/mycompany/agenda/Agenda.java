@@ -5,7 +5,7 @@
 
 package com.mycompany.agenda;
 
-import FormularioCliente.FormularioCliente;
+import Vistas.FormularioCliente;
 
 /**
  *
